@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Query</title>
+    <script>
+        function searchUser() {
+            const username = document.getElementById('search').value.trim();
+            if (username) {
+                // Redirect to the correct endpoint for searching queries
+                window.location.href = `/show_query_list?user=${encodeURIComponent(username)}`;
+            } else {
+                alert("Please enter a username to search!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Query List</h2>
+    <input type="text" name="search" id="search" placeholder="Search username...">
+    <button type="button" onclick="searchUser()">Search</button>
+    
+    <table border="2px">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Asked By</th>
+                <th>Query</th>
+                <th>Created at</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for query in queries %}
+            <tr>
+                <td>{{ query.query_id }}</td>
+                <td>{{ query.username }}</td>
+                <td>{{ query.question }}</td>
+                <td>{{ query.created_at }}</td>
+                <td>
+                    <a href="/delete_query?id={{ query.query_id }}" onclick="return confirm('Are you sure you want to delete this query?')">
+                        Delete
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if not queries %}
+    <p>No queries found for "{{ search_username }}"</p>
+    {% endif %}
+</body>
+</html>

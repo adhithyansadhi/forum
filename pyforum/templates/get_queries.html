@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <title>Forum Queries</title>
+    <style>
+        .header{
+            position: absolute;
+            top: 15px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <span>Welcome - {{ username }}</span><br>
+        <label for="query">Have a query - </label>
+        <a href="/create_query">Post here!</a>
+        <span><a href="/logout">Logout</a></span>
+    </div>
+    <div class="container">
+        <h1>Forum Queries</h1>
+        <div id="queries"></div>
+    </div>
+    
+    <script>
+    async function getQueries() {
+        const response = await fetch('/get_queries',{headers:{ 'Accept':'application/json' } });
+        if(!response.ok) throw new Error('Failed to fetch queries');
+        const data = await response.json();
+        if(data.length === 0 ){
+        queryContainer.innerHTML = '<p>No queries Found. Be the first to ask!</p>';
+        return
+        }
+        const queryContainer = document.getElementById('queries');
+
+        // Assuming `user_id` is passed to the template via a global variable
+        const userId = {{ user_id | tojson | safe }};
+        if (!userId) throw new Error("User ID failed to get");
+        for (const query of data) {
+            const queryBox = document.createElement('div');
+            queryBox.classList.add('query-box');
+
+            const queryTitle = document.createElement('h2');
+            queryTitle.classList.add('query-title');
+            queryTitle.innerText = query.question + ' - Asked by ' + query.username;
+
+            const replyButton = document.createElement('button');
+            replyButton.innerText = "Reply";
+            replyButton.addEventListener('click', () => {
+                const replyForm = queryBox.querySelector('.reply-form');
+                replyForm.style.display = 'block';
+            });
+
+            const replyForm = document.createElement('div');
+            replyForm.classList.add('reply-form');
+            replyForm.style.display = 'none';
+
+            const replyTextArea = document.createElement('textarea');
+            replyTextArea.placeholder = "Write your reply...";
+
+            const submitButton = document.createElement('button');
+            submitButton.innerText = "Submit";
+
+            submitButton.addEventListener('click', async () => {
+                const replyText = replyTextArea.value;
+
+                // Ensure userId is available and valid
+                if (!userId) {
+                    alert("User not authenticated. Please log in.");
+                    return;
+                }
+                if(!replyText){
+                    alert('Reply cannot be empty.');
+                    return;
+                   }
+
+                const response = await fetch('/reply_query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query_id: query.query_id, user_id: userId, reply: replyText })
+                });
+
+                if (response.ok) {
+                    // Refresh the page to display the new reply
+                    location.reload();
+                } else {
+                    alert("Error submitting reply.");
+                }
+            });
+
+            replyForm.appendChild(replyTextArea);
+            replyForm.appendChild(submitButton);
+
+            queryBox.appendChild(queryTitle);
+            queryBox.appendChild(replyButton);
+            queryBox.appendChild(replyForm);
+
+            for (const reply of query.replies) {
+                const replyElement = document.createElement('p');
+                replyElement.classList.add('reply');
+                replyElement.innerText = reply.reply + ' - Replied by ' + reply.username;
+
+                queryBox.appendChild(replyElement);
+            }
+
+            queryContainer.appendChild(queryBox);
+        }
+    }
+
+    getQueries();
+</script>
+
+
+</body>
+</html>

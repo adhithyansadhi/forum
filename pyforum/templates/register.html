@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Register</title>
+    <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        h2{
+            padding: 10px;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="login-container">
+        <h2>Register</h2>
+        <form action="/register" method="POST"  id = "registration">
+            <input type="text" name="username" placeholder="Enter username" required>
+            <input type="text" name="password" id="password" placeholder="Enter password" required>
+            <input type="password" name = "conf"  id="conf" placeholder="Confirm your password" required>
+            <div class="error" id="error-message"></div>
+            <button type="submit" >Register</button><br><br>
+
+            <label for="account">
+                Already have an account -
+            </label>
+            <a href="/login">click here to login!</a>
+        </form>
+    </div>
+    <script>
+            document.getElementById('registration').addEventListener('submit',function(event){
+                let pass = document.getElementById('password').value;
+                let conf_pass = document.getElementById('conf').value;
+                let errormessage = document.getElementById('error-message');
+                if(pass!==conf_pass){
+                    event.preventDefault();
+                    errormessage.textContent = 'Passwords does not match';
+                }
+                else{
+                    errormessage.textContent = ""
+                }
+            });
+            
+            
+        
+    </script>
+</body>
+</html>

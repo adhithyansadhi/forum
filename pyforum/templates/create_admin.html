@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create admin accoun</title>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Welcome to admin account creation page
+        </h1>
+        <form action="/create_admin" method="POST">
+            <div class="inputs">
+                <input type="text" name="username" id="username" placeholder="Enter username">
+                <input type="text" name="password" id="password" placeholder="Enter Password">
+                <div class="butt">
+                    <button type="submit" id="sub-btn">Create</button>
+                </div>
+            </div>
+            {% if message %}
+            <script>
+                alert("{{ message }}");
+                
+            </script>
+            {% endif %}
+            
+        </form>
+        
+    </div>
+</body>
+</html>
